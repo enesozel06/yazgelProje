@@ -1,74 +1,20 @@
-<?php
-session_start();
-ob_start();
+<?php 
+    /* if you're working on localhost then you don't need to change anything
+       but if you're thinking to upload it to live server then you've to edit something
+    1. Paste your website url with forward slash(/) in the domain variable, you don't need 
+       to write https://wwww. before the domain name if you have domain redirection setup
+    2. Change user, pass, db values accordingly mentioned in the comments below
+    3. Go to JavaScript file and search this keyword - let domain - then paste your url there 
+    4. After all changes you've to wait because javascript file save changes may take time to reflect */ 
 
-error_reporting(~E_DEPRECATED & ~E_NOTICE);
-date_default_timezone_set('Europe/Istanbul');
-setlocale(LC_TIME,"Turkish");
+    $domain = "localhost/enes_calisma/"; //like this: codingnepalweb.com/
+    $host = "localhost";
+    $user = "root"; //Database username
+    $pass = ""; //Database password
+    $db = "linkshorter"; //Database name
 
-
-class Db
-{
-    protected $dbHost = "localhost";
-
-    protected $dbUsername = "root"; 
-
-    protected $dbPassword = "";
-
-    protected $dbName = "linkshorter";
-
-    protected static $connection;
-
-    public function connect()
-    {
-        if (!isset(self::$connection)) {
-            self::$connection = @new mysqli($this->dbHost, $this->dbUsername, $this->dbPassword, $this->dbName);
-        }
-        if (self::$connection->connect_errno || self::$connection === false) {
-            return false;
-        }
-
-        self::$connection->select_db($this->dbName);
-        self::$connection->set_charset("utf8");
-
-        return self::$connection;
+    $conn = mysqli_connect($host, $user, $pass, $db);
+    if(!$conn){
+        echo "Database connection error".mysqli_connect_error();
     }
-
-    public function query($query)
-    {
-        $connection = $this->connect();
-
-        $result = $connection->query($query);
-
-        return $result;
-    }
-
-    public function select($query)
-    {
-        $rows = array();
-        $result = $this->query($query);
-        if ($result === false) {
-            return false;
-        }
-
-        while ($row = $result->fetch_assoc()) {
-            $rows[] = $row;
-        }
-        return $rows;
-    }
-
-    public function error()
-    {
-
-        return '<br><strong>Hata Kodu:</strong> ' . self::$connection->connect_errno . ' <br><strong>Hata MesajÄ±:</strong> ' . self::$connection->connect_error;
-    }
-
-    public function quote($value)
-    {
-        $value = trim($value);
-        $connection = $this->connect();
-        return "'" . $connection->real_escape_string($value) . "'";
-    }
-		
-}
-
+?>
